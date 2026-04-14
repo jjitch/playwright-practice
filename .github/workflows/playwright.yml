@@ -15,7 +15,7 @@ jobs:
 
       - name: Run clang-format for changed files
         run: |
-          git clang-format --style LLVM --extensions cpp --diff ${{ github.base_ref }} | tee clang-format-diff.txt
+          git clang-format --style LLVM --extensions cpp --diff ${{ github.event.pull_request.base.sha }} | tee clang-format-diff.txt
           if [ -s clang-format-diff.txt ]; then
             echo "clang-format issues found in the following files:"
             cat clang-format-diff.txt
