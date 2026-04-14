@@ -6,6 +6,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
         with:
@@ -15,7 +16,6 @@ jobs:
         run: sudo apt update && sudo apt install -y clang-format
 
       - name: Run clang-format for changed files
-        continue-on-error: true
         id: clang-format
         run: |
           git clang-format --style LLVM --extensions cpp --diff ${{ github.event.pull_request.base.sha }} > clang-format-diff.txt
@@ -25,3 +25,5 @@ jobs:
         if: steps.clang-format.outputs.result != '0'
         run: |
           echo "::error::Clang-format check failed. Please format your code."
+          cat clang-format-diff.txt
+          exit 1
