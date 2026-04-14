@@ -6,7 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
         with:
@@ -18,8 +17,11 @@ jobs:
       - name: Run clang-format for changed files
         id: clang-format
         run: |
+          set +e
           git clang-format --style LLVM --extensions cpp --diff ${{ github.event.pull_request.base.sha }} > clang-format-diff.txt
           echo "result=$?" >> "$GITHUB_OUTPUT"
+          set -e
+          exit 0
 
       - name: Check clang-format result
         if: steps.clang-format.outputs.result != '0'
